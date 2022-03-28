@@ -23,7 +23,7 @@ public class VentanaTranslucida extends JFrame{
 		setSize(new Dimension(ancho,alto));
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setIconImage(CargadorRecursos.obtenerImagenTranslucida("res/penguin.png").getSubimage(0,48,48,48));
+		setIconImage(CargadorRecursos.obtenerImagenTranslucida("res/penguin.png").getSubimage(48,0,48,48));
 
 		setLayout(null);
 		setAlwaysOnTop(true);
