@@ -1,7 +1,6 @@
 package cod;
 
-import cod.ventana.Iglu;
-import cod.ventana.Pinguino;
+import cod.ventana.Penguin;
 
 public class Inicio {
 
@@ -10,17 +9,17 @@ public class Inicio {
 	public static void main(String[] args) {
 
 		long t=System.nanoTime();
-		final Pinguino pinguino = new Pinguino(new Iglu(0,390));
+		final Penguin penguin = new Penguin();
 
 
 		while(encendido) {
 			if(t+10000000L<System.nanoTime()) {
-				pinguino.actualizar();
-				pinguino.repaint();
+				penguin.actualizar();
+				penguin.repaint();
 				t=System.nanoTime();
 			}
 		}
-		pinguino.dispose();
+		penguin.dispose();
 		System.exit(0);
 	}
 

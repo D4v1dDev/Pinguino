@@ -5,22 +5,20 @@ import java.util.Random;
 
 import cod.Inicio;
 import cod.herramientas.CargadorRecursos;
-import cod.herramientas.Tarea;
 
 import javax.swing.*;
 
-public class Pinguino extends VentanaTranslucida {
+public class Penguin extends VentanaTranslucida {
 
 	private int x = 500, y = 500;
 	private static String COMENTARIO="";
 
-	public final static char ACCION_HABLAR='q', ACCION_IR_A_POR_RATON='m',ACCION_MOVER_RANDOM='0',ACCION_IR_AL_IGLU='i',DESPEDIRSE='d';
+	public final static char ACCION_HABLAR='q', ACCION_IR_A_POR_RATON='m',ACCION_MOVER_RANDOM='0',DESPEDIRSE='d';
 
 	private final static Random r = new Random();
 	private final static BufferedImage[][] sprites = new BufferedImage[3][4];
 
 	private static Robot robot = null;
-	private final Iglu iglu;
 
 	private char objetivo;
 	private boolean fijarCursor = false;
@@ -29,9 +27,8 @@ public class Pinguino extends VentanaTranslucida {
 	private boolean enAnimacion = true;
 	private int animacion = 0;
 
-	public Pinguino(Iglu iglu) {
+	public Penguin() {
 		super(48 + 300, 48 + 30);
-		this.iglu = iglu;
 
 		try {
 			robot = new Robot();
@@ -39,7 +36,7 @@ public class Pinguino extends VentanaTranslucida {
 			e.printStackTrace();
 		}
 
-		BufferedImage img = CargadorRecursos.obtenerImagenTranslucida("res/pato.png");
+		BufferedImage img = CargadorRecursos.obtenerImagenTranslucida("res/penguin.png");
 
 		for (int x = 0; x < sprites.length; x++) {
 			for (int y = 0; y < sprites[x].length; y++) {
@@ -56,15 +53,22 @@ public class Pinguino extends VentanaTranslucida {
 					g2d.drawImage(sprites[animacion/10][sprite], 0, 20, null);
 					if (!COMENTARIO.equals("")) {
 						g2d.setColor(Color.white);
-						g2d.fillRect(0, 15,  (COMENTARIO.length() * 6) + 10, 20);
-						g2d.setColor(Color.BLACK);
-						g2d.drawString(COMENTARIO, 3, 30);
+						int longitudFrase = (COMENTARIO.length() * 6) + 10;
+						if(longitudFrase < getWidth()){
+							g2d.fillRect(0, 15,  longitudFrase, 20);
+							g2d.setColor(Color.BLACK);
+							g2d.drawString(COMENTARIO, 3, 30);
+						}else{
+							g2d.fillRect(0,0,longitudFrase/2, 35);
+							g2d.setColor(Color.BLACK);
+							g2d.drawString(COMENTARIO.substring(0,COMENTARIO.length()/2)+"-", 3, 15);
+							g2d.drawString(COMENTARIO.substring(COMENTARIO.length()/2), 3, 30);
+						}
 					}
 				}
 			}
 		};
 		setContentPane(panel);
-		setLocation(iglu.getX() + iglu.getWidth(), iglu.getY() + iglu.getHeight() / 2);
 		setVisible(true);
 	}
 
@@ -76,31 +80,12 @@ public class Pinguino extends VentanaTranslucida {
 			y = (int) MouseInfo.getPointerInfo().getLocation().getY() - 25;
 		}
 
-		if(objetivo == ACCION_IR_AL_IGLU && !iglu.isVisible()){
-			//Obtener la x e y de la ventana que se muestra y va a cerrarla
-		}
-
 		//Dirigirse hacia el objetivo
 		if (getX() == x) {
 			if (getY() == y) {
 				//Al llegar al objetivo
 				if (objetivo == ACCION_IR_A_POR_RATON) {
 					fijarCursor = true;
-				} else if (objetivo == ACCION_IR_AL_IGLU) {
-					sprite = 0;
-					enAnimacion = false;
-					animacion = 15;
-					fijarCursor = false;
-
-					COMENTARIO="";
-					repaint();
-					setVisible(false);
-					dormir(-1);
-					Tarea t = iglu.obtenerTarea();
-					if(t!=null) {
-						cambiarObjetivo((char) t.cumplirTarea()[0], (String) t.cumplirTarea()[1]);
-						return;
-					}
 				}
 				cambiarObjetivo();
 			} else {
@@ -124,16 +109,18 @@ public class Pinguino extends VentanaTranslucida {
 	}
 
 	private void cambiarObjetivo() {
-		byte a = (byte) r.nextInt(100);
-
-		if (a < 10) {
+		final byte MAX = 100;
+		final byte a = (byte) r.nextInt(MAX);
+		if(a==0) {
+			cambiarObjetivo(DESPEDIRSE);
+			return;
+		}
+		if (a < MAX / 2 ) {
 			cambiarObjetivo(ACCION_MOVER_RANDOM);
-		} else if (a < 20) {
+		} else if (a < MAX * 6 / 10) {
 			cambiarObjetivo(ACCION_IR_A_POR_RATON);
-		} else if (a < 30) {
-			cambiarObjetivo(ACCION_HABLAR);
 		} else {
-			cambiarObjetivo(ACCION_IR_AL_IGLU);
+			cambiarObjetivo(ACCION_HABLAR);
 		}
 	}
 
@@ -150,9 +137,8 @@ public class Pinguino extends VentanaTranslucida {
 				sprite = 0;
 				enAnimacion = false;
 				animacion = 15;
-				System.out.println(parametros);
 				if(parametros.equals("")){
-					final String[] COMENTARIOS = {"","Hola, ¿Qué tal?", "Si necesitas algo escibelo en el cartel de mi iglú", "No me discrimines por no ser un pato"};
+					final String[] COMENTARIOS = {"","Hola, ¿Qué tal?", "Puff, estoy muy cansado", "No me discrimines por no ser un pato","¿Cuando me vas a dar vacaciones?","Me gustaria sentir el frio polar", "Dios, es que hoy te ves malditamente bien","Soy perfecto, lo se","¿Quieres que seamos amigos?","Hay gente que está derritiendo el ártico, personalmente me ocuparé de ellos"};
 					COMENTARIO=COMENTARIOS[r.nextInt(COMENTARIOS.length - 1) + 1];
 				}else{
 					COMENTARIO= parametros;
@@ -168,12 +154,6 @@ public class Pinguino extends VentanaTranslucida {
 				break;
 			case ACCION_IR_A_POR_RATON:
 				objetivo = ACCION_IR_A_POR_RATON;
-				enAnimacion = true;
-				break;
-			case ACCION_IR_AL_IGLU:
-				objetivo = ACCION_IR_AL_IGLU;
-				x = iglu.getX() + 60;
-				y = iglu.getY();
 				enAnimacion = true;
 				break;
 			case DESPEDIRSE:
@@ -216,6 +196,14 @@ public class Pinguino extends VentanaTranslucida {
 
 	private void incrementarPos(int i, int j) {
 		setLocation(getX() + i, getY() + j);
+		if(getX() > Toolkit.getDefaultToolkit().getScreenSize().width - getWidth()){
+			if(i > 0){
+				setSize(getWidth()-i,getHeight());
+				setLocation(getX() + i, getY() + j);
+			}else if(i < 0){
+				setSize(getWidth()+i,getHeight());
+			}
+		}
 	}
 
 	private void dormir(int i) {
