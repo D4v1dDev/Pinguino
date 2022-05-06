@@ -13,10 +13,10 @@ public class Penguin extends VentanaTranslucida {
 	private int x = 500, y = 500;
 	private static String COMENTARIO="";
 
-	public final static char ACCION_HABLAR='q', ACCION_IR_A_POR_RATON='m',ACCION_MOVER_RANDOM='0',DESPEDIRSE='d';
+	public final static char ACCION_HABLAR='q', ACCION_IR_A_POR_RATON='m',ACCION_MOVER_RANDOM='0',DESPEDIRSE='d',MOVER_COLA='c';
 
 	private final static Random r = new Random();
-	private final static BufferedImage[][] sprites = new BufferedImage[3][4];
+	private final static BufferedImage[][] sprites = new BufferedImage[3][5];
 
 	private static Robot robot = null;
 
@@ -36,14 +36,13 @@ public class Penguin extends VentanaTranslucida {
 			e.printStackTrace();
 		}
 
-		BufferedImage img = CargadorRecursos.obtenerImagenTranslucida("res/penguin.png");
+		BufferedImage img = CargadorRecursos.obtenerImagenTranslucida("src/res/penguin.png");
 
 		for (int x = 0; x < sprites.length; x++) {
 			for (int y = 0; y < sprites[x].length; y++) {
 				sprites[x][y] = img.getSubimage(x * 48, y * 48, 48, 48);
 			}
 		}
-		final boolean[] firstTime = {true};
 		JPanel panel = new JPanel() {
 			@Override
 			protected void paintComponent(Graphics g) {
@@ -73,6 +72,14 @@ public class Penguin extends VentanaTranslucida {
 	}
 
 	public void moverAlAzar() {
+
+		if(objetivo == MOVER_COLA){
+			sprite = 4;
+			if(r.nextInt(1000)==0){
+				cambiarObjetivo();
+			}
+			return;
+		}
 
 		//Relocalizar Cursor
 		if (objetivo == ACCION_IR_A_POR_RATON) {
@@ -111,16 +118,21 @@ public class Penguin extends VentanaTranslucida {
 	private void cambiarObjetivo() {
 		final byte MAX = 100;
 		final byte a = (byte) r.nextInt(MAX);
+
+
+
 		if(a==0) {
 			cambiarObjetivo(DESPEDIRSE);
 			return;
 		}
-		if (a < MAX / 2 ) {
+		if (a < MAX * 50 / 100 ) {
 			cambiarObjetivo(ACCION_MOVER_RANDOM);
-		} else if (a < MAX * 6 / 10) {
+		} else if (a < MAX * 55 / 100) {
 			cambiarObjetivo(ACCION_IR_A_POR_RATON);
-		} else {
+		} else if (a < MAX * 90 / 100){
 			cambiarObjetivo(ACCION_HABLAR);
+		}else{
+			cambiarObjetivo(MOVER_COLA);
 		}
 	}
 
@@ -154,6 +166,12 @@ public class Penguin extends VentanaTranslucida {
 				break;
 			case ACCION_IR_A_POR_RATON:
 				objetivo = ACCION_IR_A_POR_RATON;
+				enAnimacion = true;
+				break;
+			case MOVER_COLA:
+				objetivo = MOVER_COLA;
+				x=getX();
+				y=getY();
 				enAnimacion = true;
 				break;
 			case DESPEDIRSE:

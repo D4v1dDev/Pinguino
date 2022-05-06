@@ -3,9 +3,7 @@ package cod.ventana;
 import cod.herramientas.CargadorRecursos;
 
 import java.awt.*;
-
-import java.awt.image.BufferStrategy;
-
+import java.io.File;
 import javax.swing.*;
 
 public class VentanaTranslucida extends JFrame{
@@ -23,10 +21,11 @@ public class VentanaTranslucida extends JFrame{
 		setSize(new Dimension(ancho,alto));
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setIconImage(CargadorRecursos.obtenerImagenTranslucida("res/penguin.png").getSubimage(48,0,48,48));
+		setIconImage(CargadorRecursos.obtenerImagenTranslucida(("src/res/penguin.png")).getSubimage(48,0,48,48));
 
 		setLayout(null);
 		setAlwaysOnTop(true);
+		setFocusable(false);
 	}
 
 	public void actualizar() {}

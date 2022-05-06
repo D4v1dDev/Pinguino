@@ -11,7 +11,6 @@ public class Inicio {
 		long t=System.nanoTime();
 		final Penguin penguin = new Penguin();
 
-
 		while(encendido) {
 			if(t+10000000L<System.nanoTime()) {
 				penguin.actualizar();

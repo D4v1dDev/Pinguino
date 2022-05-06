@@ -15,9 +15,13 @@ public class CargadorRecursos {
 	
 	public static BufferedImage obtenerImagenTranslucida(String ruta) {
 
+		/*
+		EL MALDITO FALLO AQUI ESQUE EN EL JAR NO SE CARGA LA IMAGEN DEL PINGUINO
+		 */
+
 		Image imagen = null;
-		ruta="src/"+ruta;
 		try {
+			System.out.println(new File(ruta).getAbsolutePath());
 			imagen = ImageIO.read(new File(ruta));
 		} catch (IOException e) {
 			e.printStackTrace();
