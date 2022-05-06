@@ -36,6 +36,7 @@ public class Penguin extends VentanaTranslucida {
 			e.printStackTrace();
 		}
 
+		//Carga la imagen del pinguino
 		BufferedImage img = CargadorRecursos.obtenerImagenTranslucida("src/res/penguin.png");
 
 		for (int x = 0; x < sprites.length; x++) {
@@ -43,6 +44,8 @@ public class Penguin extends VentanaTranslucida {
 				sprites[x][y] = img.getSubimage(x * 48, y * 48, 48, 48);
 			}
 		}
+
+		//Se crea el panel que contiene el pinguino y crea la animación
 		JPanel panel = new JPanel() {
 			@Override
 			protected void paintComponent(Graphics g) {
@@ -71,8 +74,9 @@ public class Penguin extends VentanaTranslucida {
 		setVisible(true);
 	}
 
-	public void moverAlAzar() {
+	public void mover() {
 
+		//Sigue moviendo la cola hasta que al azar termine.
 		if(objetivo == MOVER_COLA){
 			sprite = 4;
 			if(r.nextInt(1000)==0){
@@ -135,11 +139,9 @@ public class Penguin extends VentanaTranslucida {
 			cambiarObjetivo(MOVER_COLA);
 		}
 	}
-
 	public void cambiarObjetivo(char obj){
 		cambiarObjetivo(obj,"");
 	}
-
 	public void cambiarObjetivo(char obj, String parametros){
 
 		switch (obj) {
@@ -198,14 +200,17 @@ public class Penguin extends VentanaTranslucida {
 		}
 	}
 
-	public void actualizar() {
-		moverAlAzar();
 
+	public void actualizar() {
+		mover();
+
+		//Si debe tener el cursor en el pico, se le desplaza el raton a esa posición
 		if (fijarCursor) {
 			robot.mouseMove(getX() + 24, getY() + 45);
 			if (r.nextInt(1000) == r.nextInt(1000)) fijarCursor = false;
 		}
 
+		//Se anima
 		if (enAnimacion) {
 			animacion++;
 			animacion %= 30;
